@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>FLETXO SHARK WEB</title>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+     <style>
+         body {
+             margin: 0;
+             font-family: 'Orbitron', sans-serif;
+             background: linear-gradient(135deg, #000000, #330000); /* Black Red Mixture */
+             color: #fff;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             height: 100vh;
+             transition: all 0.5s ease-in-out;
+         }
+         .container {
+             width: 350px;
+             background: rgba(255, 255, 255, 0.1);
+             padding: 30px;
+             border-radius: 12px;
+             text-align: center;
+             box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3); /* Red Shadow */
+             border: 2px solid rgba(255, 0, 0, 0.5); /* Red Border */
+             backdrop-filter: blur(10px);
+             transition: transform 0.3s ease-in-out;
+         }
+         h2 {
+             color: #ff0000; /* Red Color */
+             text-shadow: 0 0 15px #ff0000; /* Red Text Shadow */
+         }
+         input, button {
+             width: 90%;
+             padding: 12px;
+             margin: 10px 0;
+             font-size: 1rem;
+             border: none;
+             border-radius: 8px;
+             outline: none;
+             text-align: center;
+         }
+         input {
+             background: rgba(255, 0, 0, 0.1); /* Red Background */
+             color: #fff;
+             border: 1px solid rgba(255, 0, 0, 0.3); /* Red Border */
+         }
+         button {
+             background: #ff0000; /* Red Background */
+             color: black;
+             font-weight: bold;
+             cursor: pointer;
+             transition: 0.3s;
+         }
+         button:hover {
+             background: #cc0000; /* Darker Red Hover */
+         }
+         .hidden {
+             display: none;
+         }
+         .dashboard {
+             width: 500px;
+             text-align: center;
+         }
+         .box {
+             background: rgba(255, 255, 255, 0.1);
+             border: 2px solid #ff0000; /* Red Border */
+             border-radius: 15px;
+             padding: 20px;
+             margin: 15px 0;
+             box-shadow: 0 0 15px #ff0000; /* Red Shadow */
+         }
+         .history {
+             max-height: 200px;
+             overflow-y: auto;
+             border-top: 2px solid #ff0000; /* Red Border */
+             padding-top: 10px;
+             text-align: left;
+         }
+         .history-item {
+             padding: 8px;
+             background: rgba(255, 0, 0, 0.1); /* Red Background */
+             margin: 5px 0;
+             border-radius: 8px;
+         }
+     </style>
+ </head>
+ <body>
+ 
+     <div id="loginSection" class="container">
+         <h2><i class="fas fa-lock"></i> FLETXO WEB</h2>
+         <input type="text" id="username" placeholder="Username">
+         <input type="password" id="password" placeholder="Password">
+         <button onclick="login()">Login</button>
+     </div>
+ 
+     <div id="dashboardSection" class="container dashboard hidden">
+         <h2>FLETXO SHARK WEB</h2>
+ 
+         <div class="box">
+             <strong><i class="fas fa-calendar-alt"></i> Period:</strong>
+             <div id="period">Loading...</div>
+         </div>
+ 
+         <div class="box">
+             <strong><i class="fas fa-clock"></i> Timer:</strong>
+             <div id="timer">00:00</div>
+         </div>
+ 
+         <div class="box">
+             <strong><i class="fas fa-robot"></i> Prediction:</strong>
+             <div id="prediction">--</div>
+         </div>
+ 
+         <h3>Prediction History</h3>
+         <div class="history" id="history"></div>
+         
+         <button onclick="logout()">Logout</button>
+     </div>
+ 
+     <audio id="villainPhonk" loop style="display:none;">
+         <source src="" type="audio/mpeg"> Your browser does not support the audio element.
+     </audio>
+ 
+     <script>
+         let lastPeriod = "";
+         const phonkTracks = [
+             "", // Add multiple Villain Phonk MP3 URLs here
+             "",
+             ""
+         ];
+         const villainPhonkAudio = document.getElementById('villainPhonk');
+ 
+         function playRandomPhonk() {
+             const randomIndex = Math.floor(Math.random() * phonkTracks.length);
+             villainPhonkAudio.src = phonkTracks[randomIndex];
+             villainPhonkAudio.play();
+         }
+ 
+         function login() {
+             const username = document.getElementById("username").value;
+             const password = document.getElementById("password").value;
+ 
+             if (username === "FLETXO WEB" && password === "FLETXO WEB2") {
+                 sessionStorage.setItem("loggedIn", "true");
+                 showDashboard();
+                 playRandomPhonk();
+             } else {
+                 alert("Invalid Username or Password");
+             }
+         }
+ 
+         function showDashboard() {
+             document.getElementById("loginSection").classList.add("hidden");
+             document.getElementById("dashboardSection").classList.remove("hidden");
+             updatePeriodAndTimer();
+             setInterval(updatePeriodAndTimer, 1000);
+         }
+ 
+         function logout() {
+             sessionStorage.removeItem("loggedIn");
+             villainPhonkAudio.pause();
+             location.reload();
+         }
+ 
+         function updatePeriodAndTimer() {
+             const calendar = new Date();
+             const seconds = calendar.getSeconds();
+             const remainingSeconds = 60 - seconds;
+ 
+             // Period Calculation
+             const formattedDate = calendar.toISOString().split('T')[0].replace(/-/g, '');
+             const periodNumber = "100001" + String(calendar.getMinutes()).padStart(4, '0');
+             const period = formattedDate + periodNumber;
+ 
+             document.getElementById('period').innerText = period;
+             document.getElementById('timer').innerText = `00:${remainingSeconds.toString().padStart(2, '0')}`;
+ 
+             if (lastPeriod !== period) {
+                 lastPeriod = period;
+                 makePrediction(period);
+             }
+         }
+ 
+         function makePrediction(period) {
+             const type = Math.random() > 0.5 ? "BIG" : "SMALL";
+             document.getElementById('prediction').innerText = type;
+             recordHistory(period, type);
+         }
+ 
+         function recordHistory(period, prediction) {
+             const accuracy = (Math.random() * (95 - 60) + 60).toFixed(2) + "%";
+             const newEntry = document.createElement("div");
+             newEntry.classList.add("history-item");
+             newEntry.innerHTML = `<strong>Period:</strong> ${period} <br> <strong>Prediction:</strong> ${prediction} <br> <strong>Accuracy:</strong> ${accuracy}`;
+             document.getElementById('history').prepend(newEntry);
+         }
+ 
+         window.onload = function() {
+             if (sessionStorage.getItem("loggedIn") === "true") {
+                 showDashboard();
+                 playRandomPhonk();
+             }
+         }
+     </script>
+ 
+ </body>
+ </html>
